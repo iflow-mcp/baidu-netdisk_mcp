@@ -1,3 +1,4 @@
+## Here's my code: 
 [project]
 name = "iflow-mcp_netdisk-mcp-server"
 version = "0.1.0"
@@ -13,4 +14,15 @@ dependencies = [
 ]
 
 [project.scripts]
-baidu-netdisk-mcp = "baidu_netdisk_mcp.server:main"
+baidu-netdisk-mcp = "fileupload_tool:main"
+
+[build-system]
+requires = ["setuptools>=61.0", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools]
+packages = ["openapi_client", "openapi_client.api", "openapi_client.model"]
+py-modules = ["fileupload_tool"]
+
+[tool.setuptools.package-dir]
+"" = "."

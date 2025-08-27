@@ -13,6 +13,11 @@ import json
 import io
 import time
 import random
+import urllib3
+import ssl
+
+# 禁用SSL警告
+urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 
 # 添加当前目录到系统路径
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
@@ -42,6 +47,8 @@ TIMEOUT = 30
 def configure_session():
     """配置带有重试机制的会话"""
     session = requests.Session()
+    # 禁用SSL验证以解决证书问题
+    session.verify = False
     retry_strategy = Retry(
         total=MAX_RETRIES,
         backoff_factor=RETRY_BACKOFF,
@@ -85,7 +92,12 @@ def upload_file(local_file_path: str, remote_path: str = None) -> Dict[str, Any]
         configuration.connection_pool_maxsize = 10
         configuration.retries = MAX_RETRIES
         configuration.socket_options = None  # 使用默认值
-        
+        # 禁用SSL验证以解决证书问题
+        configuration.verify_ssl = False
+        configuration.ssl_ca_cert = None
+        configuration.cert_file = None
+        configuration.key_file = None
+
         # 决定是否需要分片上传
         if file_size <= CHUNK_SIZE:
             # 小文件，直接上传
@@ -319,7 +331,10 @@ def get_help() -> str:
     - 上传失败时会自动重试
     """
 
+def main():
+    """主函数，启动MCP服务器"""
+    # 通过stdio模式运行MCP服务器
+    mcp.run(transport="stdio")
 
 if __name__ == "__main__":
-    # 直接运行服务器
-    mcp.run(transport="stdio")
+    main()
